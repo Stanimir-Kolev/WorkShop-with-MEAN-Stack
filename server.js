@@ -4,7 +4,7 @@ var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 
 var env = process.env.NODE_ENV || "development";
-var port = 3030;
+var port = process.env.PORT || 3030;
 
 var app = express();
 
@@ -15,15 +15,17 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 // setup for stylus
 app.use(stylus.middleware({
-    src: __dirname + '/site.css',
-    compile: function(src, path) {
+    src: __dirname + '/public',
+    compile: function(str, path) {
         return stylus(str).set('filename', path);
     }
 }));
 app.use(express.static(__dirname + '/public'));
 // setup for mongoDB
-mongoose.connect("mongodb://localhost/dataBase");
+// for connect with mLab (create user and share db)
+mongoose.connect("mongodb://Stanimir:stanimir@ds147964.mlab.com:47964/workshopp", { useMongoClient: true })
 var db = mongoose.connection;
+
 db.once('open', function(err) {
     if (err) {
         console.log('Database could not be opened: ' + err);
@@ -36,6 +38,8 @@ db.on('error', function(err) {
         console.log('Database error: ' + err);
     })
     // mongoose schema
+    // for error (node:4736)
+mongoose.Promise = global.Promise;
 var messageSchema = mongoose.Schema({
     message: String
 })
@@ -63,5 +67,6 @@ app.get('*', function(req, res) {
     res.render('index', { message: messageFromDatabase });
 })
 
-app.listen(port);
-console.log("Server running on port: " + port);
+app.listen(port, function() {
+    console.log('Server running on port: ' + port); // na koi port slusha 
+});
