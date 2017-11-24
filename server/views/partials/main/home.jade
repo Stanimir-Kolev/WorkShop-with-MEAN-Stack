@@ -1,0 +1,13 @@
+.container
+    .jumbotron
+        h1.text-center Home page 
+        h2.text-center Best site ever
+    .row
+        .col-md-6
+            .panel.panel-info
+                .panel-heading.text-center Featured
+                .panel-body(ng-include="'/partials/main/feature'")
+        .col-md-6
+            .panel.panel-info
+                .panel-heading.text-center New
+                .panel-body(ng-include="'/partials/main/new-features'")

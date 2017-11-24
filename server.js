@@ -40,31 +40,13 @@ db.on('error', function(err) {
     // mongoose schema
     // for error (node:4736)
 mongoose.Promise = global.Promise;
-var messageSchema = mongoose.Schema({
-    message: String
-})
-var Message = mongoose.model("Message", messageSchema);
-var messageFromDatabase;
 
-Message.remove({}).exec(function(err) {
-    if (err) {
-        console.log('Messages could not be cleared: ' + err);
-        return;
-    }
-
-    Message.create({ message: "Hi from mongoose" })
-        .then(function(model) {
-            messageFromDatabase = model.message;
-        })
-})
-
-
-app.get('/partials/:partialName', function(req, res) {
-    res.render('partials/' + req.params.partialName);
+app.get('/partials/:partialArea/:partialName', function(req, res) {
+    res.render('partials/' + req.params.partialArea + '/' + req.params.partialName);
 })
 
 app.get('*', function(req, res) {
-    res.render('index', { message: messageFromDatabase });
+    res.render('index');
 })
 
 app.listen(port, function() {
