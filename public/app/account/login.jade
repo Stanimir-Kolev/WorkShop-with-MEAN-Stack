@@ -11,5 +11,7 @@
                 | {{ identity.currentUser.username }}
                 span.caret
             ul.dropdown-menu
+                li(ng-show = 'identity.currentUser.isAdmin()')
+                        a(href="#") Users
                 li
                     a(href="", ng-click='signOut()') Sign out

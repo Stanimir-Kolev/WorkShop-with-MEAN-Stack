@@ -1,14 +1,13 @@
-app.factory('auth', function($q, $http, identity) {
+app.factory('auth', function($q, $http, identity, UsersResource) {
     return {
         login: function(user) {
             //promise
             var deferred = $q.defer();
             $http.post('/login', user).then(function(response) {
                 if (response.data.success) {
-                    identity.currentUser = response.config.data;
+                    identity.currentUser = angular.extend(new UsersResource(), response.data.user);
                     // append userObject in localStorage to access in identity
-                    var currentUser = JSON.stringify(response.data.user);
-                    localStorage.setItem('user', currentUser);
+                    localStorage.setItem('user', JSON.stringify(identity.currentUser));
                     deferred.resolve(true);
                 } else {
                     deferred.resolve(false);

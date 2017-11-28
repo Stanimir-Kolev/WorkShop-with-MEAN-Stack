@@ -10,6 +10,8 @@ var config = require('./server/config/config');
 require('./server/config/express')(app, config);
 // require for mongoose
 require('./server/config/mongoose')(config);
+// require for passport
+require('./server/config/passport')();
 // require for routes
 require('./server/config/routes')(app);
 
