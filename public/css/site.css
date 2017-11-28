@@ -4,6 +4,9 @@ body {
 .navbar-right .navbar-form input {
   margin-right: 10px;
 }
+.toast-top-right {
+  margin: 40px 100px 0 0;
+}
 footer p {
   border-top: 1px solid #808080;
   padding-top: 5px;

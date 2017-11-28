@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var passport = require('passport');
+var crypto = require('crypto');
 var LocalPassport = require('passport-local');
 
 module.exports = function(config) {
@@ -26,11 +27,18 @@ module.exports = function(config) {
     var userSchema = mongoose.Schema({
         username: String,
         firstName: String,
-        lastName: String
-            // salt: String,
-            // hashPass: String
+        lastName: String,
+        salt: String,
+        hashPass: String
     });
-
+    // chek hashPass it is salted
+    userSchema.method({
+        authenticate: function(password) {
+            if (generateHashedPassword(this.salt, password) === this.hashPass) {
+                return true;
+            } else return false;
+        }
+    })
     var User = mongoose.model('User', userSchema);
 
     User.find({}).exec(function(err, collection) {
@@ -39,12 +47,17 @@ module.exports = function(config) {
             return;
         }
         if (collection.length === 0) {
+            var salt;
+            var hashedPwd;
+
+            salt = generateSalt();
+            hashedPwd = generateHashedPassword(salt, 'stanimir');
             User.create({
                 username: 'stanimir.kolev',
                 firstName: 'Stanimir',
-                lastName: 'Kolev'
-                    // salt: String,
-                    // hashPass: String  
+                lastName: 'Kolev',
+                salt: salt,
+                hashPass: hashedPwd
             })
         }
     })
@@ -83,3 +96,12 @@ module.exports = function(config) {
         })
     })
 };
+// crypto modul from nodejs
+function generateSalt() {
+    return crypto.randomBytes(128).toString('base64');
+}
+
+function generateHashedPassword(salt, pwd) {
+    var hmac = crypto.createHmac('sha1', salt);
+    return hmac.update(pwd).digest('hex');
+}
