@@ -1,7 +1,8 @@
-app.factory('identity', function($window) {
-    // to save current user in client
+app.factory('identity', function(UsersResource) {
+    if (localStorage.getItem('user') !== null)
+        var curUser = angular.extend(new UsersResource(), JSON.parse(localStorage.getItem('user')));
     return {
-        currentUser: JSON.parse(localStorage.getItem('user')),
+        currentUser: curUser,
         isAuthenticated: function() {
             return !!this.currentUser;
         }

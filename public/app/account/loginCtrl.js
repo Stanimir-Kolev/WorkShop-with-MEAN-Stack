@@ -12,10 +12,11 @@ app.controller('LoginCtrl', function($scope, $location, notifier, identity, auth
     $scope.signOut = function() {
         auth.logout().then(function() {
             notifier.success('Successful logout!');
-            $scope.identity = undefined;
+            if ($scope.user) {
+                $scope.user.username = '';
+                $scope.user.password = '';
+            }
             $location.path('/');
-            $scope.user.username = '';
-            $scope.user.password = '';
         })
     }
 })

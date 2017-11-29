@@ -14,5 +14,14 @@ module.exports = {
     logout: function(req, res, next) {
         req.logout()
         res.end();
+    },
+    // checked user is login
+    isAuthenticated: function(req, res, next) {
+        if (!req.isAuthenticated()) {
+            res.status(403);
+            res.end();
+        } else {
+            next();
+        }
     }
 }

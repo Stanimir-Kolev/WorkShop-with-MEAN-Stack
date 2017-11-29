@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-var crypto = require('crypto');
+var encryption = require('../utilities/encryption');
 
 module.exports = function(config) {
     // setup for mongoDB
@@ -23,9 +23,9 @@ module.exports = function(config) {
     mongoose.Promise = global.Promise;
 
     var userSchema = mongoose.Schema({
-        username: String,
-        firstName: String,
-        lastName: String,
+        username: { type: String, require: '{PATH} is required', unique: true },
+        firstName: { type: String, require: '{PATH} is required' },
+        lastName: { type: String, require: '{PATH} is required' },
         salt: String,
         hashPass: String,
         roles: [String]
@@ -33,7 +33,7 @@ module.exports = function(config) {
     // chek hashPass it is salted
     userSchema.method({
         authenticate: function(password) {
-            if (generateHashedPassword(this.salt, password) === this.hashPass) {
+            if (encryption.generateHashedPassword(this.salt, password) === this.hashPass) {
                 return true;
             } else return false;
         }
@@ -49,8 +49,8 @@ module.exports = function(config) {
             var salt;
             var hashedPwd;
 
-            salt = generateSalt();
-            hashedPwd = generateHashedPassword(salt, 'stanimir');
+            salt = encryption.generateSalt();
+            hashedPwd = encryption.generateHashedPassword(salt, 'stanimir');
             User.create({
                 username: 'stanimir.kolev',
                 firstName: 'Stanimir',
@@ -62,12 +62,3 @@ module.exports = function(config) {
         }
     })
 };
-// crypto modul from nodejs
-function generateSalt() {
-    return crypto.randomBytes(128).toString('base64');
-}
-
-function generateHashedPassword(salt, pwd) {
-    var hmac = crypto.createHmac('sha1', salt);
-    return hmac.update(pwd).digest('hex');
-}
